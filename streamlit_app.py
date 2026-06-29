@@ -107,19 +107,33 @@ if featured_movie:
 
         st.write(overview)
 
+        st.markdown(
+            f"📅 **Released:** {featured_movie['release_date']}"
+        )
+
+        overview = featured_movie["overview"]
+
+        if len(overview) > 180:
+            overview = overview[:180] + "..."
+
+        st.write(overview)
+
         col1, col2 = st.columns(2)
 
         with col1:
             st.button(
-                "❤️ Add to Watchlist",
-                key="featured_watchlist"
-            )
+            "❤️ Add to Watchlist",
+            key="featured_watchlist"
+        )
 
         with col2:
-            st.button(
+            if st.button(
                 "🎥 View Details",
                 key="featured_details"
-            )
+            ):
+                st.session_state["selected_movie"] = featured_movie["id"]
+                st.switch_page("pages/movie_details.py") 
+st.markdown("---")  
 
 st.markdown("---")
 
