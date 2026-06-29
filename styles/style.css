@@ -1,0 +1,116 @@
+/* -----------------------------
+   MovieVault AI Theme
+------------------------------*/
+
+.main {
+    background-color: #0E1117;
+}
+
+/* Hide Streamlit Menu */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+/* Headings */
+
+h1 {
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+h2 {
+    color: white;
+    font-weight: 600;
+}
+
+h3 {
+    color: white;
+}
+
+/* Buttons */
+
+.stButton > button {
+    width: 100%;
+    background: linear-gradient(90deg,#ff4b2b,#ff416c);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.stButton > button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 8px 25px rgba(244, 32, 82, 0.4);
+}
+
+/* Search Box */
+
+.stTextInput input {
+    border-radius: 15px;
+    border: 2px solid #444;
+    background-color: #1E1E1E;
+    color: white;
+    padding: 12px;
+}
+
+/* Metrics */
+
+[data-testid="stMetric"] {
+    background-color: #1C1F26;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* ==============================
+   HERO SECTION
+================================ */
+
+.hero{
+    background: linear-gradient(135deg,#141E30,#243B55);
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    margin-bottom:30px;
+    box-shadow:0px 10px 30px rgba(0,0,0,.45);
+}
+
+.hero h1{
+    color:white;
+    font-size:58px;
+    margin-bottom:10px;
+}
+
+.hero h3{
+    color:#D1D5DB;
+    font-size:28px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    color:#C5C5C5;
+    font-size:18px;
+    max-width:700px;
+    margin:auto;
+    line-height:1.7;
+}
+
+.rating-badge{
+    display:inline-block;
+    background:#FFD54F;
+    color:#111;
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:bold;
+    margin-bottom:15px;
+}

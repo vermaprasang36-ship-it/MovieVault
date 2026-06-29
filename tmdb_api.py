@@ -10,6 +10,7 @@ IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
 def format_movie(movie):
     poster_path = movie.get("poster_path")
+    backdrop_path = movie.get("backdrop_path")
 
     return {
         "id": movie.get("id"),
@@ -17,8 +18,18 @@ def format_movie(movie):
         "release_date": movie.get("release_date"),
         "rating": movie.get("vote_average"),
         "overview": movie.get("overview"),
-        "poster_url": f"{IMAGE_BASE_URL}{poster_path}" if poster_path else None,
+
+        "poster_url": (
+            f"{IMAGE_BASE_URL}{poster_path}"
+            if poster_path else None
+        ),
+
+        "backdrop_url": (
+            f"{IMAGE_BASE_URL}{backdrop_path}"
+            if backdrop_path else None
+        ),
     }
+    
 
 def fetch_movies(endpoint, params=None):
     if not API_KEY:
@@ -45,7 +56,17 @@ def fetch_movies(endpoint, params=None):
         data = response.json()
         movies = data.get("results", [])
 
-        return [format_movie(movie) for movie in movies]
+        formatted = [format_movie(movie) for movie in movies]
+
+        print("=" * 50)
+        print("RETURNING FROM fetch_movies()")
+        print(formatted[0])
+        print("=" * 50)
+
+        return formatted
+        
+        print("Returning from fetch_movies():")
+        print(formatted[0])
 
     except requests.exceptions.RequestException as e:
         print(f"TMDB Error: {e}")
@@ -63,6 +84,11 @@ def search_movies(query):
 def get_popular_movies():
     return fetch_movies("/movie/popular")
 
+
+if __name__ == "__main__":
+    movies = get_popular_movies()
+
+    print("Movies:", len(movies))
 
 
 #.\.venv\Scripts\python.exe tmdb_api.py
