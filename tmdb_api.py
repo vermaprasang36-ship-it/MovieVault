@@ -65,3 +65,9 @@ def get_popular_movies():
 
 
 
+#.\.venv\Scripts\python.exe tmdb_api.py
+# Expected
+# No traceback
+# No syntax errors
+# No import errors
+# It may produce no output, and it's completely fine because this file only defins fnctions

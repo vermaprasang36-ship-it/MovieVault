@@ -22,3 +22,6 @@ for movie in movies:
     st.write(f"⭐ Rating: {movie['rating']}")
 
     st.write(f"📅 Release Date: {movie['release_date']}")
+
+    #.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py   ----  to run on terminal
+   
