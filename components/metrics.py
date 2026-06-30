@@ -1,7 +1,8 @@
 import streamlit as st
+from database import get_all_watchlist_movies
 
 
-def render_metrics(movies, watchlist_count=0):
+def render_metrics(movies):
     """
     Render dashboard metrics.
     """
@@ -14,13 +15,25 @@ def render_metrics(movies, watchlist_count=0):
     else:
         avg_rating = 0
 
+    # Get watchlist count from database
+    watchlist_count = len(get_all_watchlist_movies())
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric("🎬 Movies", len(movies))
+        st.metric(
+            "🎬 Movies",
+            len(movies)
+        )
 
     with col2:
-        st.metric("⭐ Avg Rating", avg_rating)
+        st.metric(
+            "⭐ Avg Rating",
+            avg_rating
+        )
 
     with col3:
-        st.metric("❤️ Watchlist", watchlist_count)
+        st.metric(
+            "❤️ Watchlist",
+            watchlist_count
+        )

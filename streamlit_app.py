@@ -2,6 +2,10 @@ import streamlit as st
 
 from tmdb_api import get_popular_movies
 from components.metrics import render_metrics
+from database import (
+    create_tables,
+    add_movie_to_watchlist
+)
 
 # -----------------------------
 # Page Configuration
@@ -11,6 +15,11 @@ st.set_page_config(
     page_icon="🎬",
     layout="wide"
 )
+
+# -----------------------------
+# Create Database
+# -----------------------------
+create_tables()
 
 # -----------------------------
 # Load CSS
@@ -49,10 +58,26 @@ and soon get <b>AI-powered recommendations.</b>
 </div>
 """, unsafe_allow_html=True)
 
-search_query = st.text_input(
-    "",
-    placeholder="🔍 Search for a movie..."
-)
+# -----------------------------
+# Search + Watchlist Button
+# -----------------------------
+col1, col2 = st.columns([5, 1])
+
+with col1:
+    search_query = st.text_input(
+        "",
+        placeholder="🔍 Search for a movie..."
+    )
+
+with col2:
+    st.write("")
+    st.write("")
+
+    if st.button(
+        "❤️ My Watchlist",
+        use_container_width=True
+    ):
+        st.switch_page("pages/watchlist.py")
 
 # -----------------------------
 # Dashboard Metrics
@@ -107,33 +132,40 @@ if featured_movie:
 
         st.write(overview)
 
-        st.markdown(
-            f"📅 **Released:** {featured_movie['release_date']}"
-        )
-
-        overview = featured_movie["overview"]
-
-        if len(overview) > 180:
-            overview = overview[:180] + "..."
-
-        st.write(overview)
-
         col1, col2 = st.columns(2)
 
+        # -----------------------------
+        # Featured Movie Buttons
+        # -----------------------------
         with col1:
-            st.button(
-            "❤️ Add to Watchlist",
-            key="featured_watchlist"
-        )
+
+            if st.button(
+                "❤️ Add to Watchlist",
+                key="featured_watchlist"
+            ):
+
+                add_movie_to_watchlist(
+                    featured_movie["id"],
+                    featured_movie["title"],
+                    featured_movie["release_date"],
+                    featured_movie["rating"],
+                    featured_movie["overview"],
+                    featured_movie["poster_url"]
+                )
+
+                st.success(
+                    f"✅ {featured_movie['title']} added to Watchlist!"
+                )
 
         with col2:
+
             if st.button(
                 "🎥 View Details",
                 key="featured_details"
             ):
+
                 st.session_state["selected_movie"] = featured_movie["id"]
-                st.switch_page("pages/movie_details.py") 
-st.markdown("---")  
+                st.switch_page("pages/movie_details.py")
 
 st.markdown("---")
 
@@ -162,10 +194,23 @@ for index, movie in enumerate(movies):
 
             st.write(f"📅 **Release:** {movie['release_date']}")
 
-            st.button(
+            if st.button(
                 "❤️ Add to Watchlist",
                 key=f"watchlist_{movie['id']}"
-            )
+            ):
+
+                add_movie_to_watchlist(
+                    movie["id"],
+                    movie["title"],
+                    movie["release_date"],
+                    movie["rating"],
+                    movie["overview"],
+                    movie["poster_url"]
+                )
+
+                st.success(
+                    f"✅ {movie['title']} added to Watchlist!"
+                )
 
 
     #.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py   ----  to run on terminal

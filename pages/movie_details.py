@@ -3,6 +3,7 @@ from tmdb_api import (
     get_movie_details,
     get_movie_trailer
 )
+from database import add_movie_to_watchlist
 
 
 # -----------------------------
@@ -93,11 +94,22 @@ if movie_id:
             col1, col2 = st.columns(2)
 
             with col1:
-                st.button(
+                if st.button(
                     "❤️ Add to Watchlist",
                     key="details_watchlist",
                     use_container_width=True
+                ):
+
+                    add_movie_to_watchlist(
+                    movie["id"],
+                    movie["title"],
+                    movie["release_date"],
+                    movie["rating"],
+                    movie["overview"],
+                    movie["poster_url"]
                 )
+
+                st.success("✅ Added to Watchlist!")
 
             with col2:
                 if trailer_url:
