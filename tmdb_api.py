@@ -2,6 +2,9 @@ import os
 import requests
 from dotenv import load_dotenv
 
+# ---------------------------------------------------
+# Load Environment Variables
+# ---------------------------------------------------
 load_dotenv()
 
 API_KEY = os.getenv("TMDB_API_KEY")
@@ -14,6 +17,7 @@ IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 # Format Movie
 # ---------------------------------------------------
 def format_movie(movie):
+
     poster_path = movie.get("poster_path")
     backdrop_path = movie.get("backdrop_path")
 
@@ -21,7 +25,7 @@ def format_movie(movie):
         "id": movie.get("id"),
         "title": movie.get("title"),
         "release_date": movie.get("release_date"),
-        "rating": movie.get("vote_average"),
+        "rating": round(movie.get("vote_average", 0), 1),
         "overview": movie.get("overview"),
 
         "poster_url": (
@@ -37,7 +41,7 @@ def format_movie(movie):
 
 
 # ---------------------------------------------------
-# Fetch Movies
+# Generic Movie Fetcher
 # ---------------------------------------------------
 def fetch_movies(endpoint, params=None):
 
@@ -70,8 +74,31 @@ def fetch_movies(endpoint, params=None):
         return [format_movie(movie) for movie in movies]
 
     except requests.exceptions.RequestException as e:
+
         print("TMDB Error:", e)
+
         return []
+
+
+# ---------------------------------------------------
+# Popular Movies
+# ---------------------------------------------------
+def get_popular_movies(page=1):
+
+    return fetch_movies(
+        "/movie/popular",
+        {
+            "page": page
+        }
+    )
+
+
+# ---------------------------------------------------
+# Trending Movies
+# ---------------------------------------------------
+def get_trending_movies():
+
+    return fetch_movies("/trending/movie/day")
 
 
 # ---------------------------------------------------
@@ -86,14 +113,6 @@ def search_movies(query):
             "include_adult": False
         }
     )
-
-
-# ---------------------------------------------------
-# Popular Movies
-# ---------------------------------------------------
-def get_popular_movies():
-
-    return fetch_movies("/movie/popular")
 
 
 # ---------------------------------------------------
@@ -127,7 +146,7 @@ def get_movie_details(movie_id):
 
             "overview": data.get("overview"),
 
-            "rating": data.get("vote_average"),
+            "rating": round(data.get("vote_average", 0), 1),
 
             "release_date": data.get("release_date"),
 
@@ -164,44 +183,54 @@ def get_movie_details(movie_id):
 # Movie Trailer
 # ---------------------------------------------------
 def get_movie_trailer(movie_id):
+
     if not API_KEY:
         return None
 
     try:
+
         response = requests.get(
             f"{BASE_URL}/movie/{movie_id}/videos",
             params={
                 "api_key": API_KEY,
                 "language": "en-US"
             },
-            timeout=30
+            timeout=20
         )
 
         response.raise_for_status()
 
-        data = response.json()
-        videos = data.get("results", [])
+        videos = response.json().get("results", [])
 
-        # Try to find any YouTube video
+        # Prefer official trailer
         for video in videos:
+
+            if (
+                video.get("site") == "YouTube"
+                and video.get("type") == "Trailer"
+            ):
+
+                return (
+                    f"https://www.youtube.com/watch?v={video['key']}"
+                )
+
+        # Fallback to any YouTube video
+        for video in videos:
+
             if video.get("site") == "YouTube":
-                return f"https://www.youtube.com/watch?v={video['key']}"
 
-        # Fallback to YouTube search if no trailer exists
-        movie = get_movie_details(movie_id)
-
-        if movie:
-            title = movie["title"].replace(" ", "+")
-            return (
-                f"https://www.youtube.com/results"
-                f"?search_query={title}+official+trailer"
-            )
+                return (
+                    f"https://www.youtube.com/watch?v={video['key']}"
+                )
 
         return None
 
     except requests.exceptions.RequestException as e:
+
         print("Trailer Error:", e)
+
         return None
+
 
 # ---------------------------------------------------
 # Test
@@ -213,12 +242,16 @@ if __name__ == "__main__":
     print("Movies:", len(movies))
 
     if movies:
-        movie_id = movies[0]["id"]
 
-        trailer = get_movie_trailer(movie_id)
+        print("\nFirst Movie:\n")
 
-        print("Trailer:", trailer)
+        print(movies[0])
 
+        print("\nTrailer:\n")
+
+        print(get_movie_trailer(movies[0]["id"]))
+
+        
 #.\.venv\Scripts\python.exe tmdb_api.py
 # Expected
 # No traceback

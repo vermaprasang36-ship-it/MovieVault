@@ -73,7 +73,28 @@ def update_watched_status(tmdb_id, watched):
     conn.commit()
     conn.close()
 
+def is_movie_in_watchlist(tmdb_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT 1
+        FROM watchlist
+        WHERE tmdb_id = ?
+        """,
+        (tmdb_id,)
+    )
+
+    exists = cursor.fetchone() is not None
+
+    conn.close()
+
+    return exists
+
 
 if __name__ == "__main__":
     create_tables()
     print("Database setup completed successfully.")
+
+

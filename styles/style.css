@@ -114,3 +114,110 @@ h3 {
     font-weight:bold;
     margin-bottom:15px;
 }
+
+/* ===================================================
+                    HERO BANNER
+=================================================== */
+
+.hero-banner{
+
+    position:relative;
+
+    width:100%;
+
+    height:620px;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    background-size:cover;
+
+    background-position:center;
+
+    margin-bottom:35px;
+
+}
+
+/* Dark cinematic overlay */
+
+.hero-banner::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.92) 0%,
+            rgba(0,0,0,.72) 35%,
+            rgba(0,0,0,.25) 70%,
+            rgba(0,0,0,.05) 100%
+        );
+
+}
+
+/* Content */
+
+.hero-content{
+
+    position:absolute;
+
+    left:60px;
+
+    bottom:60px;
+
+    width:45%;
+
+    z-index:2;
+
+}
+
+.hero-tag{
+
+    color:#00D4FF;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    margin-bottom:10px;
+
+}
+
+.hero-title{
+
+    color:white;
+
+    font-size:64px;
+
+    font-weight:800;
+
+    margin-bottom:10px;
+
+}
+
+.hero-meta{
+
+    color:#FFD700;
+
+    font-size:24px;
+
+    margin-bottom:25px;
+
+}
+
+.hero-overview{
+
+    color:#F1F1F1;
+
+    font-size:20px;
+
+    line-height:1.8;
+
+}
