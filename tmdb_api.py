@@ -92,6 +92,17 @@ def get_popular_movies(page=1):
         }
     )
 
+# ---------------------------------------------------
+# Top Rated Movies
+# ---------------------------------------------------
+def get_top_rated_movies(page=1):
+
+    return fetch_movies(
+        "/movie/top_rated",
+        {
+            "page": page
+        }
+    )
 
 # ---------------------------------------------------
 # Trending Movies
@@ -177,6 +188,16 @@ def get_movie_details(movie_id):
         print("Movie Details Error:", e)
 
         return None
+    
+
+# ---------------------------------------------------
+# Similar Movies
+# ---------------------------------------------------
+def get_similar_movies(movie_id):
+
+    return fetch_movies(
+        f"/movie/{movie_id}/similar"
+    )    
 
 
 # ---------------------------------------------------

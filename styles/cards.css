@@ -1,0 +1,45 @@
+/* ===================================================
+                    MOVIE CARDS
+=================================================== */
+
+[data-testid="stVerticalBlockBorderWrapper"]{
+
+    border-radius:20px !important;
+
+    background:#181c24;
+
+    border:1px solid #2A2F3C !important;
+
+    transition:all .25s ease;
+
+    overflow:hidden;
+
+}
+
+[data-testid="stVerticalBlockBorderWrapper"]:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.35);
+
+}
+
+.stImage img{
+
+    border-radius:14px;
+
+    transition:transform .35s ease;
+
+}
+
+.stImage img:hover{
+
+    transform:scale(1.03);
+
+}
+
+/* Equal height movie cards */
+
+[data-testid="stVerticalBlockBorderWrapper"]{
+    min-height: 720px;
+}

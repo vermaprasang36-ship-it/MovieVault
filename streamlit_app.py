@@ -3,16 +3,21 @@ import streamlit as st
 from tmdb_api import (
     get_popular_movies,
     get_trending_movies,
+    get_top_rated_movies,
+    search_movies,
 )
 
 from components.metrics import render_metrics
 import components.hero as hero
+
 
 from database import (
     create_tables,
     add_movie_to_watchlist,
     is_movie_in_watchlist,
 )
+
+from components.movie_card import render_movie_card
 
 
 
@@ -23,7 +28,8 @@ from database import (
 st.set_page_config(
     page_title="MovieVault",
     page_icon="🎬",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # -----------------------------
@@ -35,11 +41,25 @@ create_tables()
 # Load CSS
 # -----------------------------
 def load_css():
-    with open("styles/style.css") as f:
-        st.markdown(
-            f"<style>{f.read()}</style>",
-            unsafe_allow_html=True
-        )
+
+    css_files = [
+        "styles/theme.css",
+        "styles/buttons.css",
+        "styles/hero.css",
+        "styles/cards.css",
+    ]
+
+    css = ""
+
+    for file in css_files:
+        with open(file, encoding="utf-8") as f:
+            css += f.read() + "\n"
+
+    st.markdown(
+        f"<style>{css}</style>",
+        unsafe_allow_html=True
+    )
+
 
 load_css()
 
@@ -72,6 +92,7 @@ movies = unique_movies
 
 # Fetch trending movies for the hero
 trending_movies = get_trending_movies()
+top_rated_movies = get_top_rated_movies()
 
 # Hero movie
 if trending_movies:
@@ -88,6 +109,57 @@ st.title("🎬 MovieVault AI")
 st.caption("Discover • Explore • Watch")
 
 hero.render_hero(featured_movie)
+
+st.markdown("###")
+
+b1, b2, b3 = st.columns(3)
+
+with b1:
+
+    if is_movie_in_watchlist(featured_movie["id"]):
+
+        st.button(
+            "❤️ In Watchlist",
+            disabled=True,
+            use_container_width=True
+        )
+
+    else:
+
+        if st.button(
+            "❤️ Add to Watchlist",
+            use_container_width=True,
+            key="hero_watchlist"
+        ):
+
+            add_movie_to_watchlist(
+                featured_movie["id"],
+                featured_movie["title"],
+                featured_movie["release_date"],
+                featured_movie["rating"],
+                featured_movie["overview"],
+                featured_movie["poster_url"]
+            )
+
+            st.rerun()
+
+with b2:
+
+    st.button(
+        "▶ Watch Trailer",
+        use_container_width=True,
+        key="hero_trailer"
+    )
+
+with b3:
+
+    st.button(
+        "ℹ View Details",
+        use_container_width=True,
+        key="hero_details"
+    )
+
+st.markdown("---")
 # -----------------------------
 # Search + Watchlist Button
 # -----------------------------
@@ -99,6 +171,17 @@ with col1:
         "",
         placeholder="🔍 Search for a movie..."
     )
+
+# -----------------------------
+# Search Movies
+# -----------------------------
+if search_query.strip():
+
+    movies = search_movies(search_query)
+
+else:
+
+    movies = unique_movies
 
 with col2:
     st.write("")
@@ -117,6 +200,24 @@ render_metrics(movies)
 
 st.markdown("---")
 
+# -----------------------------
+# Top Rated Movies
+# -----------------------------
+st.subheader("⭐ Top Rated Movies")
+
+top_cols = st.columns(4)
+
+for index, movie in enumerate(top_rated_movies[:4]):
+
+    with top_cols[index]:
+
+        render_movie_card(
+            movie,
+            f"top_{movie['id']}"
+        )
+
+st.markdown("---")
+
 
 
 # -----------------------------
@@ -132,51 +233,12 @@ for index, movie in enumerate(movies):
 
     with cols[index % 3]:
 
-        with st.container(border=True):
+        render_movie_card(
+            movie,
+            unique_key
+        )
 
-            if movie["poster_url"]:
-                st.image(
-                    movie["poster_url"],
-                    use_container_width=True
-                )
 
-            st.markdown(f"### 🎬 {movie['title']}")
-
-            st.write(f"⭐ **Rating:** {movie['rating']}")
-            st.write(f"📅 **Release:** {movie['release_date']}")
-
-            # -----------------------------
-            # Watchlist Button
-            # -----------------------------
-            if is_movie_in_watchlist(movie["id"]):
-
-                st.button(
-                    " ❤️ In Watchlist",
-                    disabled=True,
-                    key=f"saved_{unique_key}",
-                    use_container_width=True
-                )
-
-            else:
-
-                if st.button(
-                    "❤️ Add to Watchlist",
-                    key=f"watchlist_{unique_key}",
-                    use_container_width=True
-                ):
-
-                    add_movie_to_watchlist(
-                        movie["id"],
-                        movie["title"],
-                        movie["release_date"],
-                        movie["rating"],
-                        movie["overview"],
-                        movie["poster_url"]
-                    )
-
-                    st.toast("❤️ Added to Watchlist!")
-
-                    st.rerun()
 
 # -----------------------------
 # Load More Movies

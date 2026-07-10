@@ -1,0 +1,97 @@
+/* ===================================================
+                    MOVIEVAULT THEME
+=================================================== */
+
+:root{
+
+    /* Colors */
+
+    --primary:#FF4B4B;
+    --secondary:#00D4FF;
+    --gold:#FFD54F;
+
+    --bg:#0E1117;
+    --surface:#161B22;
+    --card:#1E232D;
+
+    --text:#FFFFFF;
+    --text-light:#D1D5DB;
+    --text-muted:#9CA3AF;
+
+    --border:#2D333B;
+
+    /* Radius */
+
+    --radius:18px;
+
+    /* Shadow */
+
+    --shadow:
+        0 10px 35px rgba(0,0,0,.35);
+
+}
+
+
+/* ===================================================
+                    GLOBAL
+=================================================== */
+
+.main{
+
+    background:var(--bg);
+
+}
+
+body{
+
+    color:var(--text);
+
+}
+
+
+/* Hide Streamlit Branding */
+
+#MainMenu{
+
+    visibility:hidden;
+
+}
+
+footer{
+
+    visibility:hidden;
+
+}
+
+header{
+
+    visibility:hidden;
+
+}
+
+
+/* Headings */
+
+h1{
+
+    color:var(--text);
+
+    font-weight:800;
+
+}
+
+h2{
+
+    color:var(--text);
+
+    font-weight:700;
+
+}
+
+h3{
+
+    color:var(--text);
+
+    font-weight:600;
+
+}

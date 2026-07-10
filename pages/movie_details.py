@@ -1,10 +1,15 @@
 import streamlit as st
+
 from tmdb_api import (
     get_movie_details,
-    get_movie_trailer
+    get_movie_trailer,
+    get_similar_movies,
 )
-from database import add_movie_to_watchlist
 
+from database import (
+    add_movie_to_watchlist,
+    is_movie_in_watchlist,
+)
 
 # -----------------------------
 # Page Configuration
@@ -37,7 +42,7 @@ if movie_id:
 
     movie = get_movie_details(movie_id)
     trailer_url = get_movie_trailer(movie_id)
-
+    similar_movies = get_similar_movies(movie_id)
     if movie:
 
         # -----------------------------
@@ -80,10 +85,25 @@ if movie_id:
             st.write(f"⏱ **Runtime:** {movie['runtime']} min")
             st.write(f"🌍 **Language:** {movie['language']}")
 
-            genres = " • ".join(movie["genres"])
-            st.write(f"🎭 **Genres:** {genres}")
+            # -----------------------------
+            # Genres
+            # -----------------------------
+            st.markdown("### 🎭 Genres")
 
-            st.markdown("### Overview")
+            genre_cols = st.columns(len(movie["genres"]))
+
+            for col, genre in zip(genre_cols, movie["genres"]):
+
+                with col:
+                    st.info(genre)
+
+            st.markdown("---")
+
+            # -----------------------------
+            # Overview
+            # -----------------------------
+            st.markdown("## 📖 Overview")
+
             st.write(movie["overview"])
 
             st.markdown("###")
@@ -94,36 +114,50 @@ if movie_id:
             col1, col2 = st.columns(2)
 
             with col1:
-                if st.button(
-                    "❤️ Add to Watchlist",
-                    key="details_watchlist",
-                    use_container_width=True
-                ):
 
-                    add_movie_to_watchlist(
-                    movie["id"],
-                    movie["title"],
-                    movie["release_date"],
-                    movie["rating"],
-                    movie["overview"],
-                    movie["poster_url"]
-                )
+                if is_movie_in_watchlist(movie["id"]):
 
-                st.success("✅ Added to Watchlist!")
-
-            with col2:
-                if trailer_url:
-                    st.link_button(
-                        "▶ Watch Trailer",
-                        trailer_url,
+                    st.button(
+                        "❤️ In Watchlist",
+                        disabled=True,
                         use_container_width=True
                     )
+
                 else:
+
+                    if st.button(
+                        "❤️ Add to Watchlist",
+                        key="details_watchlist",
+                        use_container_width=True
+                    ):
+
+                        add_movie_to_watchlist(
+                            movie["id"],
+                            movie["title"],
+                            movie["release_date"],
+                            movie["rating"],
+                            movie["overview"],
+                            movie["poster_url"]
+                        )
+
+                        st.success("✅ Added to Watchlist!")
+
+                        st.rerun()
+
+            with col2:
+
+                if trailer_url:
+
+                    st.video(trailer_url)
+                
+                else:
+
                     st.button(
                         "❌ Trailer Not Available",
                         disabled=True,
                         use_container_width=True
                     )
+
 
     else:
         st.error("❌ Movie not found.")
@@ -131,6 +165,40 @@ if movie_id:
 else:
     st.info("👈 Please select a movie from the Home page.")
 
+
+st.markdown("---")
+st.subheader("🎬 You May Also Like")
+
+if similar_movies:
+
+    cols = st.columns(4)
+
+    for index, similar in enumerate(similar_movies[:4]):
+
+        with cols[index]:
+
+            with st.container(border=True):
+
+                if similar.get("poster_url"):
+
+                    st.image(
+                        similar["poster_url"],
+                        use_container_width=True
+                    )
+
+                st.markdown(f"**{similar['title']}**")
+
+                st.caption(f"⭐ {similar['rating']}")
+
+                if st.button(
+                    "🎬 View Details",
+                    key=f"similar_{similar['id']}",
+                    use_container_width=True
+                ):
+
+                    st.session_state["selected_movie"] = similar["id"]
+
+                    st.rerun()
 # -----------------------------
 # Back Button
 # -----------------------------
