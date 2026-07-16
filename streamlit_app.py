@@ -4,8 +4,11 @@ from tmdb_api import (
     get_popular_movies,
     get_trending_movies,
     get_top_rated_movies,
+    get_movies_by_genre,
     search_movies,
+    GENRES,
 )
+
 
 from components.metrics import render_metrics
 import components.hero as hero
@@ -43,11 +46,11 @@ create_tables()
 def load_css():
 
     css_files = [
-        "styles/theme.css",
-        "styles/buttons.css",
-        "styles/hero.css",
-        "styles/cards.css",
-    ]
+    "styles/theme.css",
+    "styles/buttons.css",
+    "styles/hero.css",
+    "styles/cards.css",
+]
 
     css = ""
 
@@ -93,6 +96,12 @@ movies = unique_movies
 # Fetch trending movies for the hero
 trending_movies = get_trending_movies()
 top_rated_movies = get_top_rated_movies()
+
+# -----------------------------
+# Genre Session
+# -----------------------------
+if "selected_genre" not in st.session_state:
+    st.session_state.selected_genre = None
 
 # Hero movie
 if trending_movies:
@@ -145,19 +154,27 @@ with b1:
 
 with b2:
 
-    st.button(
+    if st.button(
         "▶ Watch Trailer",
         use_container_width=True,
         key="hero_trailer"
-    )
+    ):
+
+        st.session_state["selected_movie"] = featured_movie["id"]
+
+        st.switch_page("pages/movie_details.py")
 
 with b3:
 
-    st.button(
+    if st.button(
         "ℹ View Details",
         use_container_width=True,
         key="hero_details"
-    )
+    ):
+
+        st.session_state["selected_movie"] = featured_movie["id"]
+
+        st.switch_page("pages/movie_details.py")
 
 st.markdown("---")
 # -----------------------------
@@ -199,6 +216,151 @@ with col2:
 render_metrics(movies)
 
 st.markdown("---")
+
+# -----------------------------
+# Trending Slider State
+# -----------------------------
+if "trending_index" not in st.session_state:
+    st.session_state.trending_index = 0
+
+# -----------------------------
+# Trending Today
+# -----------------------------
+st.subheader("🔥 Trending Today")
+
+left, center, right = st.columns([1, 8, 1])
+
+# Left Arrow
+with left:
+
+    if st.button("⬅", key="trending_left"):
+
+        if st.session_state.trending_index > 0:
+            st.session_state.trending_index -= 1
+
+# Right Arrow
+with right:
+
+    if st.button("➡", key="trending_right"):
+
+        if st.session_state.trending_index < len(trending_movies) - 4:
+            st.session_state.trending_index += 1
+
+# Visible Movies
+visible_movies = trending_movies[
+    st.session_state.trending_index:
+    st.session_state.trending_index + 4
+]
+
+with center:
+
+    cols = st.columns(4)
+
+    for col, movie in zip(cols, visible_movies):
+
+        with col:
+
+            render_movie_card(
+                movie,
+                f"trending_{movie['id']}"
+            )
+
+st.markdown("---")
+
+# -----------------------------
+# Genre Slider State
+# -----------------------------
+if "genre_index" not in st.session_state:
+    st.session_state.genre_index = 0
+
+# -----------------------------
+# Browse by Genre
+# -----------------------------
+st.subheader("🎭 Browse by Genre")
+
+genre_names = list(GENRES.keys())
+
+left, center, right = st.columns([1, 8, 1])
+
+# -----------------------------
+# Left Arrow
+# -----------------------------
+with left:
+
+    if st.button("⬅", key="genre_left"):
+
+        if st.session_state.genre_index > 0:
+            st.session_state.genre_index -= 1
+
+# -----------------------------
+# Right Arrow
+# -----------------------------
+with right:
+
+    if st.button("➡", key="genre_right"):
+
+        if st.session_state.genre_index < len(genre_names) - 4:
+            st.session_state.genre_index += 1
+
+# -----------------------------
+# Visible Genres
+# -----------------------------
+visible_genres = genre_names[
+    st.session_state.genre_index :
+    st.session_state.genre_index + 4
+]
+
+with center:
+
+    cols = st.columns(4)
+
+    for col, genre in zip(cols, visible_genres):
+
+        with col:
+
+            if st.button(
+                genre,
+                key=f"genre_{genre}",
+                use_container_width=True,
+            ):
+
+                st.session_state.selected_genre = genre
+
+# -----------------------------
+# Selected Genre Movies
+# -----------------------------
+if st.session_state.selected_genre:
+
+    st.markdown("---")
+
+    st.subheader(
+        f"🎬 {st.session_state.selected_genre} Movies"
+    )
+
+    genre_movies = get_movies_by_genre(
+        GENRES[st.session_state.selected_genre]
+    )
+
+    genre_movie_cols = st.columns(4)
+
+    for index, movie in enumerate(genre_movies[:8]):
+
+        with genre_movie_cols[index % 4]:
+
+            render_movie_card(
+                movie,
+                f"genre_{movie['id']}"
+            )
+
+    st.markdown("---")
+
+    # -----------------------------
+# Top Rated Slider State
+# -----------------------------
+if "top_rated_index" not in st.session_state:
+    st.session_state.top_rated_index = 0
+
+
 
 # -----------------------------
 # Top Rated Movies
@@ -272,3 +434,4 @@ if st.button(
 
     #.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py   ----  to run on terminal
    
+ 

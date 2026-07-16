@@ -105,6 +105,37 @@ def get_top_rated_movies(page=1):
     )
 
 # ---------------------------------------------------
+# Genre Movies
+# ---------------------------------------------------
+def get_movies_by_genre(genre_id, page=1):
+
+    return fetch_movies(
+        "/discover/movie",
+        {
+            "with_genres": genre_id,
+            "page": page
+        }
+    )
+
+GENRES = {
+    "Action": 28,
+    "Adventure": 12,
+    "Animation": 16,
+    "Comedy": 35,
+    "Crime": 80,
+    "Drama": 18,
+    "Family": 10751,
+    "Fantasy": 14,
+    "History": 36,
+    "Horror": 27,
+    "Music": 10402,
+    "Mystery": 9648,
+    "Romance": 10749,
+    "Sci-Fi": 878,
+    "Thriller": 53,
+}
+
+# ---------------------------------------------------
 # Trending Movies
 # ---------------------------------------------------
 def get_trending_movies():
