@@ -1,0 +1,5 @@
+[33m934937a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Add genre slider and trending/top-rated carousel
+[33m57353b3[m Added top rated movies, embedded trailers and similar movie navigation
+[33mc0f1634[m Redesign hero section and improve homepage UI
+[33ma939700[m Implement persistent watchlist, movie details page and YouTube trailer integration
+[33md377b79[m Add movie details page with trailer integration
