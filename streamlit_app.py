@@ -277,17 +277,6 @@ with col1:
         placeholder="🔍 Search for a movie..."
     )
 
-# -----------------------------
-# Search Movies
-# -----------------------------
-if search_query.strip():
-
-    movies = search_movies(search_query)
-
-else:
-
-    movies = unique_movies
-
 with col2:
     st.write("")
     st.write("")
@@ -298,6 +287,15 @@ with col2:
     ):
         st.switch_page("pages/watchlist.py")
 
+# -----------------------------
+# Search Logic
+# -----------------------------
+if search_query.strip():
+    movies = search_movies(search_query.strip())
+else:
+    movies = unique_movies
+
+    
 # -----------------------------
 # Dashboard Metrics
 # -----------------------------
@@ -520,6 +518,6 @@ if st.button(
 
     st.rerun()
 
-    #.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py   ----  to run on terminal
+    # .\.venv\Scripts\python.exe -m streamlit run streamlit_app.py   ----  to run on terminal
    
  

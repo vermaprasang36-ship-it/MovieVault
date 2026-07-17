@@ -7,72 +7,76 @@ from database import (
 
 
 def render_movie_card(movie, unique_key):
+    """Render a premium movie card."""
 
     with st.container(border=True):
 
         # ----------------------------
         # Poster
         # ----------------------------
-        if movie.get("poster_url"):
+        poster = movie.get("poster_url")
+
+        if poster:
             st.image(
-                movie["poster_url"],
+                poster,
                 use_container_width=True,
             )
 
         # ----------------------------
         # Title
         # ----------------------------
+        title = movie.get("title", "Unknown Movie")
+
         st.markdown(
             f"""
             <div style="
-                font-size:22px;
-                font-weight:700;
-                line-height:1.3;
-                height:60px;
-                overflow:hidden;
-                margin-top:12px;
-                margin-bottom:10px;
+            font-size:22px;
+            font-weight:700;
+            line-height:1.3;
+            height:60px;
+            overflow:hidden;
+            margin-top:12px;
+            margin-bottom:12px;
             ">
-                {movie["title"]}
+            {title}
             </div>
             """,
             unsafe_allow_html=True,
-        )
+            )
 
         # ----------------------------
-        # Rating + Release Year
+        # Rating + Year
         # ----------------------------
-        year = movie.get("release_date", "")[:4]
+        rating = movie.get("rating", "N/A")
+
+        release_date = movie.get("release_date", "")
+        year = release_date[:4] if release_date else "----"
 
         st.markdown(
             f"""
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:16px;
-            ">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
 
-                <span style="
-                    background:#E50914;
-                    color:white;
-                    padding:5px 12px;
-                    border-radius:999px;
-                    font-size:14px;
-                    font-weight:600;
-                ">
-                    ⭐ {movie["rating"]}
-                </span>
+<span style="
+background:#E50914;
+color:white;
+padding:5px 12px;
+border-radius:999px;
+font-size:14px;
+font-weight:600;
+">
+⭐ {rating}
+</span>
 
-                <span style="
-                    color:#B7BDC9;
-                    font-size:14px;
-                ">
-                    📅 {year}
-                </span>
+<span style="
+color:#B7BDC9;
+font-size:14px;
+font-weight:500;
+">
+📅 {year}
+</span>
 
-            </div>
-            """,
+</div>
+""",
             unsafe_allow_html=True,
         )
 
@@ -82,31 +86,28 @@ def render_movie_card(movie, unique_key):
         overview = movie.get("overview", "")
 
         if len(overview) > 130:
-            overview = overview[:130] + "..."
+            overview = overview[:130].rstrip() + "..."
 
         st.markdown(
             f"""
-            <div style="
-                color:#C5CAD5;
-                font-size:14px;
-                line-height:1.6;
-                height:95px;
-                overflow:hidden;
-                margin-bottom:18px;
-            ">
-                {overview}
-            </div>
-            """,
+<div style="
+color:#C5CAD5;
+font-size:14px;
+line-height:1.6;
+height:95px;
+overflow:hidden;
+margin-bottom:18px;
+">
+{overview}
+</div>
+""",
             unsafe_allow_html=True,
         )
 
         # ----------------------------
         # Buttons
         # ----------------------------
-        col1, col2 = st.columns(
-            [1, 1],
-            gap="small",
-        )
+        col1, col2 = st.columns(2, gap="small")
 
         with col1:
 
@@ -151,3 +152,4 @@ def render_movie_card(movie, unique_key):
                 st.session_state["selected_movie"] = movie["id"]
 
                 st.switch_page("pages/movie_details.py")
+
