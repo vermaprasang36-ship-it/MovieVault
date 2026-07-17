@@ -2,44 +2,115 @@
                     MOVIE CARDS
 =================================================== */
 
+/* Card */
+
 [data-testid="stVerticalBlockBorderWrapper"]{
 
-    border-radius:20px !important;
+    background:linear-gradient(
+        180deg,
+        #1C2230 0%,
+        #12161F 100%
+    );
 
-    background:#181c24;
+    border-radius:22px !important;
 
-    border:1px solid #2A2F3C !important;
-
-    transition:all .25s ease;
+    border:1px solid rgba(255,255,255,.05)!important;
 
     overflow:hidden;
 
+    transition:
+        transform .28s ease,
+        box-shadow .28s ease,
+        border-color .28s ease;
+
+    min-height:720px;
+
 }
+
+/* Hover */
 
 [data-testid="stVerticalBlockBorderWrapper"]:hover{
 
-    transform:translateY(-6px);
+    transform:translateY(-10px);
 
-    box-shadow:0 18px 35px rgba(0,0,0,.35);
+    border-color:#E50914!important;
+
+    box-shadow:
+        0 22px 55px rgba(0,0,0,.45),
+        0 0 18px rgba(229,9,20,.20);
+
+}
+
+/* Poster */
+
+.stImage{
+
+    overflow:hidden;
+
+    border-radius:18px;
 
 }
 
 .stImage img{
 
-    border-radius:14px;
+    transition:
+        transform .45s ease,
+        filter .45s ease;
 
-    transition:transform .35s ease;
-
-}
-
-.stImage img:hover{
-
-    transform:scale(1.03);
+    border-radius:18px;
 
 }
 
-/* Equal height movie cards */
+/* Poster Hover */
 
-[data-testid="stVerticalBlockBorderWrapper"]{
-    min-height: 720px;
+[data-testid="stVerticalBlockBorderWrapper"]:hover
+.stImage img{
+
+    transform:scale(1.07);
+
+    filter:
+        brightness(1.08)
+        contrast(1.04);
+
+}
+
+/* Buttons */
+
+.stButton>button{
+
+    border-radius:12px!important;
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+
+}
+
+.stButton>button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.25);
+
+}
+
+/* Headings */
+
+h3{
+
+    font-weight:700!important;
+
+    letter-spacing:.2px;
+
+}
+
+/* Captions */
+
+[data-testid="stCaptionContainer"]{
+
+    color:#B7BDC9!important;
+
+    line-height:1.65;
+
 }

@@ -6,22 +6,40 @@ def render_hero(movie):
     if not movie:
         return
 
-    with st.container():
+    st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
 
-        if movie.get("backdrop_url"):
-            st.image(
-                movie["backdrop_url"],
-                use_container_width=True
-            )
+    if movie.get("backdrop_url"):
 
-        st.markdown(f"# {movie['title']}")
+        st.markdown('<div class="hero-image">', unsafe_allow_html=True)
 
-        c1, c2 = st.columns(2)
+        st.image(
+            movie["backdrop_url"],
+            use_container_width=True,
+        )
 
-        with c1:
-            st.markdown(f"⭐ **{movie['rating']}**")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        with c2:
-            st.markdown(f"📅 **{movie['release_date']}**")
+    st.markdown(
+        f"""
+        <div class="hero-info">
 
-        st.write(movie["overview"])
+            <div class="hero-title">
+                🎬 {movie["title"]}
+            </div>
+
+            <div class="hero-meta">
+                ⭐ {movie["rating"]}
+                &nbsp;&nbsp;&nbsp;
+                📅 {movie["release_date"]}
+            </div>
+
+            <div class="hero-overview">
+                {movie["overview"]}
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("</div>", unsafe_allow_html=True)

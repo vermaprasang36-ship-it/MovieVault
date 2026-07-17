@@ -11,7 +11,8 @@ from tmdb_api import (
 
 
 from components.metrics import render_metrics
-import components.hero as hero
+
+from components import hero_html as hero
 
 
 from database import (
@@ -50,6 +51,7 @@ def load_css():
     "styles/buttons.css",
     "styles/hero.css",
     "styles/cards.css",
+    "styles/layout.css",
 ]
 
     css = ""
@@ -66,9 +68,13 @@ def load_css():
 
 load_css()
 
-# -----------------------------
-# Fetch Movies
-# -----------------------------
+with open("styles/hero.css") as f:
+    st.markdown(
+        f"<style>{f.read()}</style>",
+        unsafe_allow_html=True,
+    ) 
+
+
 # -----------------------------
 # Session State
 # -----------------------------
@@ -98,16 +104,38 @@ trending_movies = get_trending_movies()
 top_rated_movies = get_top_rated_movies()
 
 # -----------------------------
+# Hero Movies (Top 5 Trending)
+# -----------------------------
+hero_movies = trending_movies[:5]
+
+# -----------------------------
+# Hero Slider State
+# -----------------------------
+if "hero_index" not in st.session_state:
+    st.session_state.hero_index = 0
+
+# -----------------------------
 # Genre Session
 # -----------------------------
 if "selected_genre" not in st.session_state:
     st.session_state.selected_genre = None
 
-# Hero movie
-if trending_movies:
-    featured_movie = trending_movies[0]
+# -----------------------------
+# Hero Movie
+# -----------------------------
+if hero_movies:
+
+    featured_movie = hero_movies[
+        st.session_state.hero_index
+    ]
+
 else:
-    featured_movie = movies[0] if movies else None
+
+    featured_movie = (
+        movies[0]
+        if movies
+        else None
+    )
 
 
 # -----------------------------
@@ -117,7 +145,67 @@ st.title("🎬 MovieVault AI")
 
 st.caption("Discover • Explore • Watch")
 
-hero.render_hero(featured_movie)
+hero_container = st.container()
+
+with hero_container:
+
+    hero.render_hero(
+        hero_movies,
+        st.session_state.hero_index
+    )
+
+    left_arrow, dots, right_arrow = st.columns([1, 8, 1])
+
+
+with left_arrow:
+
+    if st.button(
+        "⬅",
+        key="hero_left",
+        use_container_width=True
+    ):
+
+        if st.session_state.hero_index > 0:
+
+            st.session_state.hero_index -= 1
+
+            st.rerun()
+
+with right_arrow:
+
+    if st.button(
+        "➡",
+        key="hero_right",
+        use_container_width=True
+    ):
+
+        if st.session_state.hero_index < len(hero_movies) - 1:
+
+            st.session_state.hero_index += 1
+
+            st.rerun()
+
+with dots:
+
+    dots = ""
+
+for i in range(len(hero_movies)):
+
+    if i == st.session_state.hero_index:
+        dots += "🔴 "
+    else:
+        dots += "⚪ "
+
+st.markdown(
+    f"""
+    <div style="text-align:center;font-size:20px;">
+        {dots}
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("###")
 

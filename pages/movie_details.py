@@ -36,6 +36,9 @@ st.markdown(
 # -----------------------------
 # Get Selected Movie
 # -----------------------------
+
+similar_movies = []
+
 movie_id = st.session_state.get("selected_movie")
 
 if movie_id:
@@ -43,6 +46,7 @@ if movie_id:
     movie = get_movie_details(movie_id)
     trailer_url = get_movie_trailer(movie_id)
     similar_movies = get_similar_movies(movie_id)
+    
     if movie:
 
         # -----------------------------
@@ -161,10 +165,6 @@ if movie_id:
 
     else:
         st.error("❌ Movie not found.")
-
-else:
-    st.info("👈 Please select a movie from the Home page.")
-
 
 st.markdown("---")
 st.subheader("🎬 You May Also Like")
